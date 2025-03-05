@@ -7,6 +7,7 @@ keyring = EncryptedKeyring()
 app = Flask(__name__)
 isPhoneGap = CHANGEME
 
+
 CORS(app)
 password=keyring.get_password("space-trader", "{username}")
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://{username}:{password}@localhost/spacetrader"
