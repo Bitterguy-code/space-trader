@@ -5,7 +5,7 @@ from keyrings.alt.file import EncryptedKeyring
 
 keyring = EncryptedKeyring()
 app = Flask(__name__)
-username = ""
+username = "test"
 
 CORS(app)
 password=keyring.get_password("space-trader", "{username}")
