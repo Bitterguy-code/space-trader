@@ -5,8 +5,7 @@ from keyrings.alt.file import EncryptedKeyring
 
 keyring = EncryptedKeyring()
 app = Flask(__name__)
-isPhoneGap = CHANGEME
-
+username = CHANGEME
 
 CORS(app)
 password=keyring.get_password("space-trader", "{username}")
@@ -24,7 +23,7 @@ class agent(db.Model):
 
 class useragentinfo(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
-    isPhoneGap = CHANGEME
+    username = CHANGEME
     agent_id = db.Column(db.Integer)
     agent_key = db.Column(db.String(255))
 
