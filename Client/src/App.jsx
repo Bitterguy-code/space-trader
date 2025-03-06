@@ -6,72 +6,77 @@ import React,{useEffect} from 'react'
 import './App.css'
 
 function App() {
-  let apiKey;
-  async function handeApiSubmit(e) {
-    const result = await new Promise(resolve => {
-      e.preventDefault()
-      let api_key = document.getElementById('user_api')
-      resolve(api_key.value)
+  const [apiInput, set_api_input] = useState('')
+  const [apiKey, set_api_key] = useState('')
+  const [agentData, set_agent_data] = useState(null)
+  const [error, set_error] = useState(null)
+
+  function handleSubmit() {
+    let new_api_key = apiInput;
+    set_api_key(new_api_key);
+    fetch('http://localhost:8000/api/store-key', {
+      method: 'POST',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({new_api_key})
     })
-    apiKey = result;
+    .then(response => response.json())
+    .then(data => {
+      console.log('Sucess', data)
+    })
+    .catch((error) => {
+      console.error('Error', error)
+    })
   }
-  
-  async function handleDisplayApi(e) {
-    let displayApi = document.getElementById('displayApi')
-    const result = await new Promise(resolve => {
-      e.preventDefault()
-      if (apiKey === undefined || apiKey == ''){
-        resolve('No API submitted')
-      } else {
-        resolve(apiKey)
-      }
-      
+
+  function fetchAgent() {
+    fetch('http://localhost:8000/api/fetch-agent',{method:'POST'})
+    .then(response => response.json())
+    .then(data => {
+      set_agent_data(data);
+      set_error(null)
     })
-    displayApi.innerText = result
+    .catch(error => {
+      set_error(error.message)
+      set_agent_data(null)
+    })
+
   }
-
-  async function handleStoreApi(e) {
-    let displayApi = document.getElementById('displayApi')
-    const result = await new Promise(resolve => {
-      e.preventDefault()
-      fetch("http://localhost:8000/api/store-key", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({apiKey})
-      })
-      .then(response => response.json())
-      .then(data => {
-        
-        resolve(data)
-      })
-      .catch(error => {
-        displayApi.innerText = 'Error' + error
-        resolve(error)
-      })
-    })
-    if (result.succes != null){
-      displayApi.innerText = 'API succesfully submitted'
-    } else {
-      displayApi.innerText = 'Error:' + result.error
-    }
-    console.log(result)
-    }
-
-  
-
 
   return (
     <>
-      <h1>Enter API Key</h1>
-      <form onSubmit={(event) => handeApiSubmit(event)}>
-        <input id='user_api' type='text'></input>
-        <input id='submitApi' type='submit' value='Submit API'/>
-      </form>
-      <button onClick={(event) => handleDisplayApi(event)}>Display API</button>
-      <button onClick={(event) => handleStoreApi(event)}>Store API</button>
-      <p id='displayApi'></p>
+      {
+      <div>
+        <h1>My agent Info</h1>
+
+        <label>
+          Enter API Key:
+          <input type='text'
+          value={apiInput}
+          onChange={(e) => set_api_input(e.target.value)}
+          placeholder='Enter API key'
+          />
+        </label>
+        <button onClick={handleSubmit} disabled={!apiInput}>Submit API</button>
+        <button onClick={fetchAgent} disabled={!apiKey}> Fetch Agent Data</button>
+        {agentData && (
+          <div>
+            <h2>Agent Data:</h2>
+            <pre>{(JSON.stringify(agentData.data,null,2))}</pre>
+          </div>
+        )}
+        
+        {error && (
+          <div>
+            <h2>Error:</h2>
+            <p>{error}</p>
+          </div>
+        )}
+      </div>
+
+      
+      }
     </>
   )
 }
