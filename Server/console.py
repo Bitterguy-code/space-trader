@@ -39,10 +39,36 @@ class UserAgentInfo(db.Model):
 
     agent = db.relationship('Agent', backref='user_agent_info',lazy=True)
 
+#SQL functions
+def get_user_agent_info():
+    user_agents = UserAgentInfo.query.all()
+    user_agent_list = [
+        {'user_id':user_agent.user_id,
+         'acount_id':user_agent.acount_id,
+         'agent_id':user_agent.agent_id,
+         'agent_key':user_agent.agent_key}
+         for user_agent in user_agents
+    ]
+
+    return user_agent_list
+
+def set_user_agent_info():
+    if apiKey == '':
+        return ['No API Key in memory', False]
+    
+    user_agents = get_user_agent_info()
+    for user_agent in user_agents:
+        if apiKey == user_agent['agent_key']:
+            return ['Already stored', False]
+    
+    agent = fetch_agent()
+
+
+
 #API calls
 apiKey = ''
-@app.route('/api/store-key', methods=['POST'])
-def store_key():
+@app.route('/api/set-key', methods=['POST'])
+def set_key():
     """_summary_
     receives api key submission from the client. Checks if it is valid, then if it is stored. If it is valid and not stored then it stores it. Otherwise it returns an error
 
@@ -82,8 +108,10 @@ def fetch_agent():
     except requests.exceptions.RequestException as e:
         return jsonify({'error':str(e)}), 500
 
+
+
 with app.app_context():
     db.create_all()
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8000,debug = True)
+    app.run(host='127.0.0.1', port=8000,debug=False)
