@@ -1,0 +1,31 @@
+@import "tailwindcss";
+@import "bootstrap";
+
+html,
+body {
+  height: 100%;
+}
+
+.conatainer-fluid {
+  height: 100vh;
+}
+
+:root {
+  background-color: $gray-600;
+}
+
+.bigAgent {
+  text-align: left;
+}
+
+#userInputs {
+  background-color: $gray-600;
+}
+
+.row-border {
+  border: 5px solid red($color: #000000);
+}
+
+.custom-shadow {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

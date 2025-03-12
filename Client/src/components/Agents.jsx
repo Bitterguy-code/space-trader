@@ -1,13 +1,21 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 
-
-
-export const Agent = ({agentdata}) => {
-
-    console.log(agentdata)
-        return (
-            <>
-                <ul className='bigAgent'>
+export const Agent = ({ agentdata }) => {
+  console.log(agentdata);
+  return (
+    <>
+      <div className="row">
+        <div className="card">
+          <div className="card-header">{agentdata.data.symbol}</div>
+          <p className="card-text">
+            HQ: {agentdata.data.headquarters} <br />
+            Faction: {agentdata.data.startingFaction} <br />
+            Creds: {agentdata.data.credits} <br />
+            Ships: {agentdata.data.shipCount} <br />
+          </p>
+        </div>
+      </div>
+      {/* <ul className='bigAgent'>
                     <li>{agentdata.data.symbol}</li>
                     <ul className='littleAgent'>
                         <li>
@@ -23,17 +31,19 @@ export const Agent = ({agentdata}) => {
                             Ships: {agentdata.data.shipCount}
                         </li>
                     </ul>
-                </ul>
-            </>
-        )
-    }
+                </ul> */}
+    </>
+  );
+};
 
-export const Error = ({agenterror}) => {
-    console.log(agenterror)
-    return (
-        <>
-            <h2 className='errorDisplay'>ERROR</h2>
-            <p>{agenterror.error.message} ({agenterror.error.code})</p>
-        </>
-    )
-}
+export const Error = ({ agenterror }) => {
+  console.log(agenterror);
+  return (
+    <>
+      <h2 className="errorDisplay">ERROR</h2>
+      <div className="alert alert-warning" role="alert">
+        {agenterror.error.message} ({agenterror.error.code})
+      </div>
+    </>
+  );
+};
