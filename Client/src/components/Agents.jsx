@@ -1,11 +1,15 @@
 import React, { useState } from "react";
+import Alert from 'react-bootstrap/Alert';
 
-export const Agent = ({ agentdata }) => {
+export const Agent = ({ agentdata, onSelect, isSelected }) => {
   console.log(agentdata);
   return (
     <>
-      <div className="row">
-        <div className="card">
+      <div className="row g-0">
+        <div
+          className={`card ${isSelected ? 'selected' : ''}`}
+          onClick={() => onSelect(agentdata.api)}
+        >
           <div className="card-header">{agentdata.data.symbol}</div>
           <p className="card-text">
             HQ: {agentdata.data.headquarters} <br />
@@ -15,23 +19,6 @@ export const Agent = ({ agentdata }) => {
           </p>
         </div>
       </div>
-      {/* <ul className='bigAgent'>
-                    <li>{agentdata.data.symbol}</li>
-                    <ul className='littleAgent'>
-                        <li>
-                            HQ: {agentdata.data.headquarters}
-                        </li>
-                        <li>
-                            Creds: {agentdata.data.credits}
-                        </li>
-                        <li>
-                            Faction: {agentdata.data.startingFaction}
-                        </li>
-                        <li>
-                            Ships: {agentdata.data.shipCount}
-                        </li>
-                    </ul>
-                </ul> */}
     </>
   );
 };
@@ -40,10 +27,10 @@ export const Error = ({ agenterror }) => {
   console.log(agenterror);
   return (
     <>
-      <h2 className="errorDisplay">ERROR</h2>
-      <div className="alert alert-warning" role="alert">
-        {agenterror.error.message} ({agenterror.error.code})
-      </div>
+      <Alert variant="warning" dismissible>
+        <Alert.Heading>Error</Alert.Heading>
+        <p>{agenterror.error.message} ({agenterror.error.code})</p>
+      </Alert>
     </>
   );
 };

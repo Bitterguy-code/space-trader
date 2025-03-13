@@ -4,15 +4,29 @@ import viteLogo from "/vite.svg";
 import axios from "axios";
 import React, { useEffect } from "react";
 import { Agent, Error } from "./components/Agents";
+import AgentDetails from "./components/AgentDetails";
 import "./App.scss";
 import _ from "lodash";
 import Button from "react-bootstrap/Button";
 
 function App() {
-  const [apiInput, set_api_input] = useState("");
   const [apiKey, set_api_key] = useState("");
   const [agentData, set_agent_data] = useState([]);
   const [error, set_error] = useState(null);
+  const [currentApi, set_current_api] = useState(null);
+  
+
+  const handleAgentSelect = (selectedApi) => {
+    set_current_api(selectedApi);
+  }
+
+  function addAgent(newData, apiKey) {
+    newData['api'] = apiKey;
+    // console.log(newData);
+    let agentArr = [...agentData];
+    agentArr.push(newData);
+    set_agent_data(agentArr);
+  }
 
   function handleFetchAgent() {
     const isObjectInArray = (object, array) => {
@@ -30,6 +44,7 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         if (Object.keys(data)[0] == "data") {
+          data['api'] = apiKey
           if (isObjectInArray(data, agentData)) {
             set_error({
               error: {
@@ -38,9 +53,7 @@ function App() {
               },
             });
           } else {
-            let agentArr = [...agentData];
-            agentArr.push(data);
-            set_agent_data(agentArr);
+            addAgent(data,apiKey);
             set_error(null);
           }
         } else {
@@ -55,40 +68,14 @@ function App() {
   return (
     <>
       {
-        // <div id='userInputs' className='conatiner'>
-
-        //   <div className='d-flex align-items-start mt-3 mt-md-5'>
-        //     <div className='col-8 text-end'>
-        //       <input type='text'
-        //       value={apiKey}
-        //       onChange={(e) => set_api_key(e.target.value)}
-        //       placeholder='Enter API key'
-        //       />
-        //     </div>
-        //     <div className='col text-center'>
-        //       <Button onClick={handleFetchAgent} disabled={!apiKey} className="btn btn-primary bg-gray-200"> Fetch Agent Data</Button>
-        //     </div>
-        //   </div>
-
-        //   <div>
-        //   {error && (
-        //     <div>
-        //       <Error agenterror={error} />
-        //     </div>
-        //   )}
-        //   </div>
-
-        //   <div>
-        //     {agentData && (
-        //       console.log(agentData),
-        //       agentData.map((data) =>  <Agent agentdata={data} />)
-        //     )}
-        //   </div>
-
-        // </div>
 
         //Webpage is one row
         <div className="container-fluid h-100 d-flex flex-column">
+          {error && (
+            <div>
+              <Error agenterror={error} />
+            </div>
+          )}
           <div className="row g-0 h-100 flex-grow-1 bg-dark-subtle">
             {/* Agent input/select area on left side*/}
             <div className="col-4 h-100 border border-dark bg-dark-subtle">
@@ -118,18 +105,27 @@ function App() {
               </div>
               <div className="row g-0 h-75">
                 {/*Display card for agents*/}
-                <div className="col-10 pr-3 g-0">
+                <div className="col-10 g-0">
                   {agentData &&
                   (console.log(agentData),
-                  agentData.map((data) => <Agent agentdata={data} />))}
+                      agentData.map((data) => <Agent
+                        key={data.api}
+                        agentdata={data}
+                        onSelect={handleAgentSelect}
+                        isSelected={currentApi===data.api}
+                      />))}
                 </div>
               </div>
             </div>
             <div className="col-8">
-              
+              {/*Agent specifics*/}
+              <AgentDetails currentApi={currentApi} agentData={agentData} />
             </div>
           </div>
+          
         </div>
+
+        
       }
     </>
   );
